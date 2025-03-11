@@ -1,0 +1,10 @@
+﻿  GameProject_Test.cpp
+C:\Users\chaey\0.Study\0.PracticeProject\GameProject_Test\GameProject_Test.cpp(153,22): warning C4834: 'nodiscard' 특성이 포함된 함수의 반환 값을 버리는 중
+C:\Users\chaey\0.Study\0.PracticeProject\GameProject_Test\GameProject_Test.cpp(157,22): warning C4834: 'nodiscard' 특성이 포함된 함수의 반환 값을 버리는 중
+C:\Users\chaey\0.Study\0.PracticeProject\GameProject_Test\GameProject_Test.cpp(174,27): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+C:\Users\chaey\0.Study\0.PracticeProject\GameProject_Test\GameProject_Test.cpp(233,31): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+C:\Users\chaey\0.Study\0.PracticeProject\GameProject_Test\GameProject_Test.cpp(464,27): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+C:\Users\chaey\0.Study\0.PracticeProject\GameProject_Test\GameProject_Test.cpp(534,31): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+  GameProject_Test.vcxproj -> C:\Users\chaey\0.Study\0.PracticeProject\GameProject_Test\Debug\GameProject_Test.exe
+  'pwsh.exe'은(는) 내부 또는 외부 명령, 실행할 수 있는 프로그램, 또는
+  배치 파일이 아닙니다.
