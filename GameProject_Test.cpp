@@ -223,12 +223,12 @@ void UseItem(int InventNo)
     }
     if (useItemNo == 6)
     {
-        cout << "-- 설명: 이 노트에 이름이 적힌 인간은 죽는다. --" << endl;
         vector<string> menuItems = { "불태운다", "내 이름을 적어본다" , "지명수배서에 있는 범죄자 이름을 적어본다", "돌아가기"};
         int pointerPosition = 0;
         while (true)
         {
             system("cls");
+            cout << "-- 설명: 이 노트에 이름이 적힌 인간은 죽는다. --" << endl;
 
             for (int i = 0; i < menuItems.size(); i++)
             {
