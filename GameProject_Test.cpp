@@ -695,10 +695,59 @@ int main()
                         return 0;
                     }
                 }
+
+                // 게임 종료
                 else if (pointerPosition == 3)
                 {
-                    cout << "프로그램을 종료합니다." << endl;
-                    return 0;
+                    //cout << "프로그램을 종료합니다." << endl;
+                    //return 0;
+                    cout << "-- 종료하시겠습니까? --" << endl;
+                    vector<string> menuItems = { "종료하기", "돌아가기" };
+                    int pointerPosition = 0;
+                    while (true)
+                    {
+                        system("cls");
+
+                        for (int i = 0; i < menuItems.size(); i++)
+                        {
+                            if (i == pointerPosition)
+                            {
+                                cout << ">> " << menuItems[i] << endl;
+                            }
+                            else {
+                                cout << "   " << menuItems[i] << endl;
+                            }
+                        }
+
+                        // 키 입력 대기
+                        int key = _getch();
+
+                        // 위쪽 방향키
+                        if (key == 72)
+                        {
+                            pointerPosition = (pointerPosition - 1 + menuItems.size()) % menuItems.size();
+                        }
+                        // 아래쪽 방향키
+                        else if (key == 80)
+                        {
+                            pointerPosition = (pointerPosition + 1) % menuItems.size();
+                        }
+                        // Enter 키
+                        else if (key == 13)
+                        {
+                            // 종료하기
+                            if (pointerPosition == 0)
+                            {
+                                cout << "프로그램을 종료합니다." << endl;
+                                return 0;
+                            }
+                            // 돌아가기
+                            if (pointerPosition == 1)
+                            {
+                                break;
+                            }
+                        }
+                    }
                 }
                 // Enter 입력 후 키 대기
                 system("pause");
