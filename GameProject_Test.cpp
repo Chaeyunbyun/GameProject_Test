@@ -7,6 +7,9 @@
 #include <random>
 #include <conio.h> // Windows에서 방향키 입력을 위해 사용
 
+#include "GameProject.h"
+#include "Npc_Game.h"
+
 using namespace std;
 using std::cout;
 using std::endl;
@@ -40,12 +43,9 @@ MyCharacter MyCh;
 Iteminfo iteminfo[10];
 Inventorty MyInven[7];
 
-// 복권 소유 여부
-bool isLotto = false;
-
-// 마지막 데미지 원인
-// 0: 독 1: 함정 2: 지뢰
-int lastDamage = -1;
+int MyMoney = 100;
+string Myjob ="";
+string MyName = "";
 
 void ItemMaster()
 {
@@ -55,7 +55,6 @@ void ItemMaster()
     iteminfo[2] = { 2,"이상한사탕",0,0,1 };
     iteminfo[3] = { 3,"물",0,0,0 };
     iteminfo[4] = { 4,"독약",-100,0,0 };
-    // 미구현
     iteminfo[5] = { 5,"복권",0,0,0 };
     iteminfo[6] = { 6,"데스노트",0,0,0 };
 }
@@ -141,6 +140,18 @@ void GameEnding(int n, bool isGameClear)
         cout << MyCh.strName + ": 내가 신세계의 신이 되겠어." << "\n";
 
         strEnd = "Hidden Ending 02: 신세계의 신.";
+    }
+    // 도적단 두목에게 사망
+    else if (n == 7)
+    {
+        strEnd = "Bad Ending 05: 도적단 두목에게 공격받아 사망했습니다.";
+    }
+    // 타노스에게 사망
+    else if (n==8)
+    {
+        cout << MyCh.strName + ": 으윽... 속이 이상해... 기분이 안 좋아..." << "\n";
+        cout << "-- 몸이 점차 먼지가 되어 사라지기 시작했다. --" << "\n";
+        strEnd = "Bad Ending 06 (Hidden): 이젠 가망이 없어.";
     }
     else
     {
@@ -262,6 +273,9 @@ void UseItem(int InventNo)
                 {
                     cout << MyCh.strName + ": " << "이런 불길한 노트는 없애야 해\n";
                     cout << "-- 데스노트는 불타서 없어졌습니다." << endl;
+
+                    MyInven[InventNo].intItemCount--;
+                    return;
                 }
                 // 내 이름 적기
                 if (pointerPosition == 1)
@@ -304,7 +318,7 @@ void UseItem(int InventNo)
                 {
                     strStatus = "감소";
                     // 독으로 인한 데미지
-                    lastDamage = 0;
+                    m_lastDamage = 0;
                 }
                 cout << "-- Hp: " << iteminfo[i].RestoreHp << " " << strStatus << " / Hp: " << MyCh.intHP << endl;
             }
@@ -338,7 +352,7 @@ void UseItem(int InventNo)
 
             if (MyCh.intHP <= 0)
             {
-                GameEnding(lastDamage, false);
+                GameEnding(m_lastDamage, false);
             }
 
             return;
@@ -379,7 +393,7 @@ void AddInvent(int ItemNo, int ItemCount)
 {
     if (ItemNo == 5)
     {
-        isLotto = true;
+        m_isLotto = true;
     }
 
     // 먼저 인벤토리에 같은 아이템이 있는지 확인
@@ -417,13 +431,18 @@ void AddInvent(int ItemNo, int ItemCount)
 
 void PrintInfo()
 {
-    cout << "**** 캐릭터 정보 ****" << endl;
-    cout << "-- 이름: " + MyCh.strName << endl;
-    cout << "-- 레벨: " + to_string(MyCh.intLevel) << endl;
-    cout << "-- Hp: " + to_string(MyCh.intHP) << endl;
-    cout << "-- Mp: " + to_string(MyCh.intMp) << endl;
-    cout << "-- 공격력 :" + to_string(MyCh.intAttack) << endl;
-    cout << "-- 마법력 :" + to_string(MyCh.intMagic) << endl;
+    cout << "______________________" << "\n";
+    cout << "|**** 캐릭터 정보 ****" << endl;
+    cout << "______________________" << "\n";
+    cout << "|      소지금: " << MyMoney  << "\n";
+    cout << "______________________" << "\n";
+    cout << "| 이름: " + MyCh.strName  << endl;
+    cout << "| 레벨: " + to_string(MyCh.intLevel) << endl;
+    cout << "| Hp: " + to_string(MyCh.intHP) << endl;
+    cout << "| Mp: " + to_string(MyCh.intMp) << endl;
+    cout << "| 공격력 :" + to_string(MyCh.intAttack) << endl;
+    cout << "| 마법력 :" + to_string(MyCh.intMagic) << endl;
+    cout << "______________________" << "\n";
 }
 
 void StartGame() {
@@ -451,16 +470,50 @@ int main()
 
     MyCh.strName = strYourName;
 
-    cout << "캐릭터 생성." << endl;
-    cout << "직업을 선택해 주세요." << endl;
+    // 전역변수에 전달
+    MyName= strYourName;
 
     vector<string> RuleItem = { "전사", "마법사", "도적","개발자" };
     int pntPosition = 0;
+
+    vector <Npc_Game> Npclist;
+
+    // npc 지정
+    // 상인 npc
+    Npc_Game merchant;
+    merchant.NpcNo = 0;
+    merchant.NpcName = "상인";
+    merchant.NpcAttkPnt = 10;
+
+    Npclist.push_back(merchant);
+
+    // 도적두목
+    Npc_Game burglar;
+    burglar.NpcNo = 1;
+    burglar.NpcName = "도적두목";
+    burglar.NpcAttkPnt = 70;
+
+    Npclist.push_back(burglar);
+
+    Npc_Game thanos;
+    thanos.NpcNo = 2;
+    thanos.NpcName = "타노스";
+    thanos.NpcAttkPnt = 1000;
+
+    Npclist.push_back(thanos);
+
+    merchant.LoadShopItemInfo();
 
     while (true)
     {
         // 메뉴 출력
         system("cls"); // Windows에서는 "cls"로 변경
+
+
+        cout << "100 원이 지급되었습니다." << "\n";
+
+        cout << "직업을 선택해 주세요." << endl;
+
         for (int i = 0; i < RuleItem.size(); i++) {
             if (i == pntPosition) {
                 cout << ">> " << RuleItem[i] << endl;
@@ -489,6 +542,8 @@ int main()
                 MyCh.intMp = 0;
                 MyCh.intAttack = 20;
                 MyCh.intMagic = 0;
+
+                Myjob = "warrior";
             }
             // 마법사
             if (pntPosition == 1)
@@ -498,6 +553,8 @@ int main()
                 MyCh.intMp = 150;
                 MyCh.intAttack = 0;
                 MyCh.intMagic = 20;
+
+                Myjob = "socerer";
             }
             // 도적
             if (pntPosition == 2)
@@ -507,6 +564,8 @@ int main()
                 MyCh.intMp = 60;
                 MyCh.intAttack = 30;
                 MyCh.intMagic = 30;
+
+                Myjob = "rogue";
             }
             // 개발자
             if (pntPosition == 3)
@@ -516,6 +575,8 @@ int main()
                 MyCh.intMp = 10;
                 MyCh.intAttack = 20;
                 MyCh.intMagic = 0;
+
+                Myjob = "programmer";
             }
             break;
         }
@@ -565,6 +626,12 @@ int main()
                         int intItemno = stoi(temp);
                         if (intItemno >= 0 && intItemno <= 4)
                         {
+                            // 해당 아이템이 존재 하지 않으면
+                            if (MyInven[intItemno].intItemCount <= 0)
+                            {
+                                continue;
+                            }
+
                             UseItem(intItemno);
                         }
                         else
@@ -584,7 +651,7 @@ int main()
                 else if (pointerPosition == 2)
                 {
                     // 랜덤
-            // 시드값을 얻기 위한 random_device 생성.
+                    // 시드값을 얻기 위한 random_device 생성.
                     std::random_device rd;
 
                     // random_device 를 통해 난수 생성 엔진을 초기화 한다.
@@ -596,17 +663,70 @@ int main()
                     // 난수를 한 번 생성해서 변수에 저장
                     int randValue = dis(gen);
 
-                    // 함정(확률: 25%)
-                    if (randValue < 25)
+                    // 함정(확률: 15%)
+                    if (randValue < 15)
                     {
                         cout << "--함정에 걸렸습니다. 체력이 20 하락합니다.  / Hp: " + to_string(MyCh.intHP - 20) << endl;
                         MyCh.intHP = MyCh.intHP - 20;
-                        lastDamage = 1;
+                        m_lastDamage = 1;
                     }
-                    // 미발견(확률: 5%)
-                    if (25 <= randValue && randValue < 30)
+                    // NPC 발견(확률: 15%) 
+                    if (15 <= randValue && randValue < 30)
                     {
-                        cout << "--아무것도 발견 하지 못하였습니다. --" << endl;
+                        // 시드값을 얻기 위한 random_device 생성.
+                        std::random_device rdItem;
+
+                        // random_device 를 통해 난수 생성 엔진을 초기화 한다.
+                        std::mt19937 genItem(rdItem());
+
+                        // 0 부터 99 까지 균등하게 나타나는 난수열을 생성하기 위해 균등 분포 정의.
+                        std::uniform_int_distribution<int> disItem(0, 99);
+
+                        // 난수를 한 번 생성해서 변수에 저장
+                        int randItemValue = disItem(genItem);
+
+                        // npc 별 등장확률
+                        if (randItemValue < 5)
+                        {
+                            int res = thanos.NpcEvent(thanos.NpcNo);
+                            if (res == 100)
+                            {
+                                cout << "-- 50%의 확률을 뚫고 생존하였다. --";
+                                _getch();
+                                continue;
+                            }
+                            if(res == -100)
+                            {
+                                m_lastDamage = 8;
+                                MyCh.intHP = 0;
+                            }
+                        }
+                        if (5 <=randItemValue && randItemValue < 55)
+                        {
+                            int res = burglar.NpcEvent(burglar.NpcNo);
+                            // 도적두목에게 공격당함
+                            if (res == -100)
+                            {
+                                cout << "-- 도적 두목에게 공격받았습니다. / Hp "<< burglar.NpcAttkPnt<<" 감소" << endl;
+
+                                m_lastDamage = 7;
+                                MyCh.intHP -= burglar.NpcAttkPnt;
+                            }
+                            else
+                            {
+                                continue;
+                            }
+                        }
+                        if (55 <= randItemValue  && randItemValue < 100)
+                        {
+                            int res = merchant.NpcEvent(merchant.NpcNo);
+                            // 구매한 경우 인벤토리에 추가 처리
+                            if (res != 100)
+                            {
+                                AddInvent(res, 1);
+                            }
+                            continue;
+                        }
                     }
 
                     // 아이템 발견(확률: 60%)
@@ -662,9 +782,9 @@ int main()
                     // 지뢰(2.5%)
                     if (90 <= randValue && randValue < 92.5)
                     {
-                        cout << "--지뢰에 걸렸습니다. 체력이 100 하락합니다.  / Hp: " + to_string(MyCh.intHP - 100) << endl;
-                        MyCh.intHP = MyCh.intHP - 100;
-                        lastDamage = 2;
+                        cout << "--지뢰에 걸렸습니다. 체력이 50 하락합니다.  / Hp: " + to_string(MyCh.intHP - 50) << endl;
+                        MyCh.intHP = MyCh.intHP - 50;
+                        m_lastDamage = 2;
                     }
 
 
@@ -680,7 +800,7 @@ int main()
                     {
                         cout << "복권방에 도착했습니다. 복권을 가져온 경우에만 응모 가능합니다." << "\n";
                         // 로또를 가지고 있으면 히든엔딩
-                        if (isLotto)
+                        if (m_isLotto)
                         {
                             GameEnding(5, true);
                             cout << "프로그램을 종료합니다." << endl;
@@ -690,7 +810,7 @@ int main()
 
                     if (MyCh.intHP <= 0)
                     {
-                        GameEnding(lastDamage, false);
+                        GameEnding(m_lastDamage, false);
                         cout << "프로그램을 종료합니다." << endl;
                         return 0;
                     }
@@ -699,8 +819,6 @@ int main()
                 // 게임 종료
                 else if (pointerPosition == 3)
                 {
-                    //cout << "프로그램을 종료합니다." << endl;
-                    //return 0;
                     cout << "-- 종료하시겠습니까? --" << endl;
                     vector<string> menuItems = { "종료하기", "돌아가기" };
                     int pointerPosition = 0;

@@ -18,9 +18,18 @@
     <ClCompile Include="GameProject_Test.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="Npc_Game.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="GameProject.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Npc_Game.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

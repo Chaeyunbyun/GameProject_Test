@@ -140,8 +140,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="GameProject_Test.cpp" />
+    <ClCompile Include="Npc_Game.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GameProject.h" />
+    <ClInclude Include="Npc_Game.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
