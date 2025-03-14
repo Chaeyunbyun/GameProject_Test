@@ -22,6 +22,8 @@ struct MyCharacter
     int intMp;
     int intAttack;
     int intMagic;
+    // 훔치기스탯
+    int intSnatch;
 };
 
 struct Inventorty
@@ -46,6 +48,7 @@ Inventorty MyInven[7];
 int MyMoney = 100;
 string Myjob ="";
 string MyName = "";
+int MySnatch = 0;
 
 void ItemMaster()
 {
@@ -152,6 +155,11 @@ void GameEnding(int n, bool isGameClear)
         cout << MyCh.strName + ": 으윽... 속이 이상해... 기분이 안 좋아..." << "\n";
         cout << "-- 몸이 점차 먼지가 되어 사라지기 시작했다. --" << "\n";
         strEnd = "Bad Ending 06 (Hidden): 이젠 가망이 없어.";
+    }
+    // 상점 주인에게 사망
+    else if (n == 9)
+    {
+        strEnd = "Bad Ending 07: 상점 주인에게 공격받아 사망했습니다.";
     }
     else
     {
@@ -495,12 +503,19 @@ int main()
 
     Npclist.push_back(burglar);
 
+    // 타노스
     Npc_Game thanos;
     thanos.NpcNo = 2;
     thanos.NpcName = "타노스";
     thanos.NpcAttkPnt = 1000;
 
     Npclist.push_back(thanos);
+
+    // 복권방 사장
+    Npc_Game lottoNpc;
+    lottoNpc.NpcNo = 3;
+    lottoNpc.NpcName = "복권방 사장";
+    lottoNpc.NpcAttkPnt = 20;
 
     merchant.LoadShopItemInfo();
 
@@ -542,6 +557,7 @@ int main()
                 MyCh.intMp = 0;
                 MyCh.intAttack = 20;
                 MyCh.intMagic = 0;
+                MyCh.intSnatch = 10;
 
                 Myjob = "warrior";
             }
@@ -553,6 +569,7 @@ int main()
                 MyCh.intMp = 150;
                 MyCh.intAttack = 0;
                 MyCh.intMagic = 20;
+                MyCh.intSnatch = 10;
 
                 Myjob = "socerer";
             }
@@ -564,6 +581,7 @@ int main()
                 MyCh.intMp = 60;
                 MyCh.intAttack = 30;
                 MyCh.intMagic = 30;
+                MyCh.intSnatch = 30;
 
                 Myjob = "rogue";
             }
@@ -575,9 +593,12 @@ int main()
                 MyCh.intMp = 10;
                 MyCh.intAttack = 20;
                 MyCh.intMagic = 0;
+                MyCh.intSnatch = 10;
 
                 Myjob = "programmer";
             }
+            MySnatch = MyCh.intSnatch;
+
             break;
         }
     }
@@ -688,7 +709,7 @@ int main()
                         // npc 별 등장확률
                         if (randItemValue < 5)
                         {
-                            int res = thanos.NpcEvent(thanos.NpcNo);
+                            int res = thanos.NpcEvent(thanos.NpcNo, m_isLotto);
                             if (res == 100)
                             {
                                 cout << "-- 50%의 확률을 뚫고 생존하였다. --";
@@ -701,9 +722,9 @@ int main()
                                 MyCh.intHP = 0;
                             }
                         }
-                        if (5 <=randItemValue && randItemValue < 55)
+                        if (5 <=randItemValue && randItemValue < 30)
                         {
-                            int res = burglar.NpcEvent(burglar.NpcNo);
+                            int res = burglar.NpcEvent(burglar.NpcNo, m_isLotto);
                             // 도적두목에게 공격당함
                             if (res == -100)
                             {
@@ -711,26 +732,57 @@ int main()
 
                                 m_lastDamage = 7;
                                 MyCh.intHP -= burglar.NpcAttkPnt;
+
+                                _getch();
                             }
                             else
                             {
                                 continue;
                             }
                         }
-                        if (55 <= randItemValue  && randItemValue < 100)
+                        if (30 <= randItemValue  && randItemValue < 90)
                         {
-                            int res = merchant.NpcEvent(merchant.NpcNo);
+                            int res = merchant.NpcEvent(merchant.NpcNo, m_isLotto);
                             // 구매한 경우 인벤토리에 추가 처리
-                            if (res != 100)
+                            if (res >= 0 && res < 100)
                             {
                                 AddInvent(res, 1);
                             }
-                            continue;
+                            if (res == -50)
+                            {
+                                cout << merchant.NpcName + ": 어딜 훔치려고." << "\n";
+                                cout << "-- 상인에게 공격받았습니다. / Hp " << merchant.NpcAttkPnt << " 감소" << endl;
+
+
+                                m_lastDamage = 9;
+                                MyCh.intHP -= merchant.NpcAttkPnt;
+
+                                _getch();
+                            }
+                        }
+                        if (90 <= randItemValue && randItemValue < 100)
+                        {
+                            int res = lottoNpc.NpcEvent(lottoNpc.NpcNo,m_isLotto);
+                            if (res  == -100)
+                            {
+                                cout << MyCh.strName + ": 복권을 가지고 다시 오자." << "\n";
+                                _getch();
+                            }
+                            if(res == 100)
+                            {
+                                _getch();
+                            }
+                            if (res == 101)
+                            {
+                                GameEnding(5, true);
+                                cout << "프로그램을 종료합니다." << endl;
+                                return 0;
+                            }
                         }
                     }
 
                     // 아이템 발견(확률: 60%)
-                    if (30 <= randValue && randValue < 90)
+                    if (30 <= randValue && randValue < 95)
                     {
                         cout << "--아이템 발견 !! --" << endl;
 
@@ -759,14 +811,22 @@ int main()
                         {
                             AddInvent(2, 1);
                         }
-                        else if (65 <= randItemValue && randItemValue < 80)
+                        // 물
+                        else if (65 <= randItemValue && randItemValue < 70)
                         {
                             AddInvent(3, 1);
                         }
-                        // 복권
-                        else if (80 <= randItemValue && randItemValue < 90)
+                        //// 복권 - 상점에서만 등장으로 변경
+                        //else if (80 <= randItemValue && randItemValue < 90)
+                        //{
+                        //    AddInvent(5, 1);
+                        //}
+                        // 돈 획득
+                        else if (70 <= randItemValue && randItemValue < 90)
                         {
-                            AddInvent(5, 1);
+                            int findMoney = 10;
+                            MyMoney += findMoney;
+                            cout << findMoney <<" 원을 획득하였습니다. (현재 소지금 : " << MyMoney <<  ")\n";
                         }
                         // 데스노트
                         else if (90 <= randItemValue && randItemValue < 95)
@@ -780,7 +840,7 @@ int main()
                     }
 
                     // 지뢰(2.5%)
-                    if (90 <= randValue && randValue < 92.5)
+                    if (95 <= randValue && randValue < 98)
                     {
                         cout << "--지뢰에 걸렸습니다. 체력이 50 하락합니다.  / Hp: " + to_string(MyCh.intHP - 50) << endl;
                         MyCh.intHP = MyCh.intHP - 50;
@@ -789,23 +849,11 @@ int main()
 
 
                     // 보물(2.5%)
-                    if (92.5 <= randValue && randValue < 95)
+                    if (98 <= randValue && randValue < 100)
                     {
                         GameEnding(4, true);
                         cout << "프로그램을 종료합니다." << endl;
                         return 0;
-                    }
-                    // 복권방(5%)
-                    if (randValue >= 95)
-                    {
-                        cout << "복권방에 도착했습니다. 복권을 가져온 경우에만 응모 가능합니다." << "\n";
-                        // 로또를 가지고 있으면 히든엔딩
-                        if (m_isLotto)
-                        {
-                            GameEnding(5, true);
-                            cout << "프로그램을 종료합니다." << endl;
-                            return 0;
-                        }
                     }
 
                     if (MyCh.intHP <= 0)

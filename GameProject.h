@@ -20,4 +20,7 @@ extern int MyMoney;
 extern string Myjob;
 extern string MyName;
 
+// хид║╠Б х╝╥Э
+extern int MySnatch;
+
 #endif

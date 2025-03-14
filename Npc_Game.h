@@ -30,7 +30,7 @@ public:
     // item 이름으로 itemno 찾기
     unordered_map<string, int> MapItem;
 
-	int NpcEvent(int NpcNo);
+	int NpcEvent(int NpcNo, bool isLotto);
 	int ShopEvent();
     void LoadShopItemInfo();
 };

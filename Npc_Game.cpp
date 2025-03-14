@@ -10,13 +10,18 @@
 /// NPC 정보, 조우 이벤트
 
 // npc 별 이벤트 분기
-int Npc_Game::NpcEvent(int NpcNo)
+// 리턴: 아이템번호: 아이템을 인벤에 추가
+// 리턴: 100 - 처리 x
+// 리턴: -100 - 사망
+// 리턴: -50 - 체력감소
+int Npc_Game::NpcEvent(int NpcNo, bool isLotto)
 {
     // 상인
 	if (NpcNo == 0)
 	{
         cout << " -- [상인]을 만났습니다. -- " << "\n";
 		int ret = ShopEvent();
+        _getch();
         return ret;
 	}
     // 도적단 두목
@@ -82,28 +87,77 @@ int Npc_Game::NpcEvent(int NpcNo)
             return -100;
         }
     }
+    if (NpcNo == 3)
+    {
+        cout << "복권방 사장: 안녕하세요" << "\n";
+        cout << "복권방 사장: 복권을 가져와야 응모 가능합니다." << "\n";
+
+        if (isLotto == false)
+        {
+            return -100;
+        }
+        else
+        {
+            _getch();
+
+            // 시드값을 얻기 위한 random_device 생성.
+            std::random_device rdItem;
+
+            // random_device 를 통해 난수 생성 엔진을 초기화 한다.
+            std::mt19937 genItem(rdItem());
+
+            // 0 부터 99 까지 균등하게 나타나는 난수열을 생성하기 위해 균등 분포 정의.
+            std::uniform_int_distribution<int> disItem(0, 99);
+
+            // 난수를 한 번 생성해서 변수에 저장
+            int randItemValue = disItem(genItem);
+
+            // 당첨
+            if (randItemValue < 20)
+            {
+                return 101;
+            }
+            else
+            {
+                cout << "복권방 사장: 아쉽네요, 다음 기회에..." << "\n";
+                return 100;
+            }
+        }
+    }
 }
 
-Npc_Game::Itemcost iteminfo[5];
-Npc_Game::ItemDisc itemdisc[5];
+Npc_Game::Itemcost iteminfo[6];
+Npc_Game::ItemDisc itemdisc[6];
+
+// gameProject_test 의 itemcode 와 맞춰야함
+//0,"빨간물약"
+//1,"파란물약"
+//2,"이상한사탕"
+//3,"물"
+//4,"독약"
+//5,"복권"
+//6,"데스노트"
 
 void ItemCostInfo()
 {
+    // 0: 필드에서만 드랍됨
     // itemcode, itemname, itemcost
     iteminfo[0] = { 0,"빨간물약",50};
     iteminfo[1] = { 1,"파란물약",50};
-    iteminfo[2] = { 2,"복권",300};
+    iteminfo[2] = { 2,"이상한사탕",0};
     iteminfo[3] = { 3,"물",10 };
     iteminfo[4] = { 4,"독약",20};
+    iteminfo[5] = { 5,"복권",150 };
 }
 
 void ItemDiscInfo()
 {
     itemdisc[0] = { 0,"Hp를 10 회복시킨다." };
     itemdisc[1] = { 1,"Mp를 10 회복시킨다." };
-    itemdisc[2] = { 2,"[복권방]으로 가져가면 좋은일이 있을수도" };
+    itemdisc[2] = { 2,"레벨이 1 증가" };
     itemdisc[3] = { 3,"평범한 물. 효과는 없어보인다..." };
     itemdisc[4] = { 4,"불길한 느낌이 나는 물약이다" };
+    itemdisc[5] = { 5,"[복권방]으로 가져가면 좋은일이 있을수도" };
 
 }
 
@@ -113,21 +167,25 @@ void Npc_Game::LoadShopItemInfo()
     ItemDiscInfo();
 
     // 전체 아이템 개수 만큼 추가
-    for (int i = 0; i < 5; i++)
+    for (int i = 0; i < 6; i++)
     {
-        AllItem.push_back(iteminfo[i].strItemName);
-        MapItem.insert(make_pair(iteminfo[i].strItemName, iteminfo[i].intItemNo));
+        if (iteminfo[i].intCost != 0)
+        {
+            AllItem.push_back(iteminfo[i].strItemName);
+            MapItem.insert(make_pair(iteminfo[i].strItemName, iteminfo[i].intItemNo));
+        }
     }
 }
 
 // 아이템 설명 보기 / 구매 처리
-// 구매한 경우 true 아니면 false
+// 구매 및 훔치기 성공: 1 구매 안함: 0 훔침 실패: 2
 // 구매한 경우 상품목록에서 제외
-bool ShowItemDisc(int itemCode, vector<string> &RuleItem)
+int ShowItemDisc(int itemCode, vector<string> &RuleItem)
 {
     cout << "설명: " << itemdisc[itemCode].strItemDisc << "\n";
     cout << "가격: " << iteminfo[itemCode].intCost << "\n";
-    cout << "0: 구매하기\n1: 돌아가기" << endl;
+    cout << "0: 구매하기\n1: 훔치기 (성공 확률:"<<MySnatch<<"%)" << endl;
+    cout << " ( 돌아가기: 0~1를 제외한 아무 키를 누르면 돌아갑니다.)" << endl;
 
     char key = _getch(); // 키 입력 받기
 
@@ -137,22 +195,44 @@ bool ShowItemDisc(int itemCode, vector<string> &RuleItem)
         {
             cout << "잔액이 부족합니다." << "\n";
             _getch();
-            return false;
+            return 0;
         }
         cout << iteminfo[itemCode].strItemName <<" 구매하였습니다.\n";
         MyMoney -= iteminfo[itemCode].intCost;
         RuleItem.erase(RuleItem.begin() + itemCode);
 
         _getch();
-        return true;
+        return 1;
     }
+    // 훔치기
     else if (key == '1')
     {
-        return false; // 종료
-    }
-    else
-    {
-        return false; // 종료
+        // 시드값을 얻기 위한 random_device 생성.
+        std::random_device rd;
+
+        // random_device 를 통해 난수 생성 엔진을 초기화 한다.
+        std::mt19937 gen(rd());
+
+        // 0 부터 99 까지 균등하게 나타나는 난수열을 생성하기 위해 균등 분포 정의.
+        std::uniform_int_distribution<int> dis(0, 99);
+
+        // 난수를 한 번 생성해서 변수에 저장
+        int randValue = dis(gen);
+        if (randValue < MySnatch)
+        {
+            // 성공
+            cout << iteminfo[itemCode].strItemName << " 훔치기를 성공했습니다.\n";
+            
+            _getch();
+            return 1;
+        }
+        else
+        {
+            // 실패
+            cout << iteminfo[itemCode].strItemName << " 훔치기를 실패했습니다.\n";
+            _getch();
+            return 2;
+        }
     }
 }
 
@@ -209,11 +289,20 @@ int Npc_Game::ShopEvent()
             if (pntPosition >= 0 && pntPosition <3)
             {
                 int itemNo = MapItem[pntItemName];
-                if (ShowItemDisc(itemNo, RuleItem))
+
+                int result = ShowItemDisc(itemNo, RuleItem);
+
+                // 구매, 훔침 성공 - 인벤토리 수량 조정을 위해 리턴
+                if (result == 1)
                 {
                     return itemNo;
                 }
-                else
+                // 흠침 실패
+                if (result == 2)
+                {
+                    return -50;
+                }
+                if (result == 0)
                 {
                     continue;
                 }
