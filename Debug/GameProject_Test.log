@@ -1,11 +1,12 @@
 ﻿  GameProject_Test.cpp
-C:\Users\chaey\0.Study\0.PracticeProject\GameProject_Test\GameProject_Test.cpp(172,22): warning C4834: 'nodiscard' 특성이 포함된 함수의 반환 값을 버리는 중
-C:\Users\chaey\0.Study\0.PracticeProject\GameProject_Test\GameProject_Test.cpp(176,22): warning C4834: 'nodiscard' 특성이 포함된 함수의 반환 값을 버리는 중
-C:\Users\chaey\0.Study\0.PracticeProject\GameProject_Test\GameProject_Test.cpp(193,27): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-C:\Users\chaey\0.Study\0.PracticeProject\GameProject_Test\GameProject_Test.cpp(252,31): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-C:\Users\chaey\0.Study\0.PracticeProject\GameProject_Test\GameProject_Test.cpp(532,27): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-C:\Users\chaey\0.Study\0.PracticeProject\GameProject_Test\GameProject_Test.cpp(616,31): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-C:\Users\chaey\0.Study\0.PracticeProject\GameProject_Test\GameProject_Test.cpp(877,43): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+C:\Users\chaey\0.Study\0.PracticeProject\GameProject_Test\GameProject_Test.cpp(265,27): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+C:\Users\chaey\0.Study\0.PracticeProject\GameProject_Test\GameProject_Test.cpp(393,22): warning C4834: 'nodiscard' 특성이 포함된 함수의 반환 값을 버리는 중
+C:\Users\chaey\0.Study\0.PracticeProject\GameProject_Test\GameProject_Test.cpp(397,22): warning C4834: 'nodiscard' 특성이 포함된 함수의 반환 값을 버리는 중
+C:\Users\chaey\0.Study\0.PracticeProject\GameProject_Test\GameProject_Test.cpp(457,31): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+C:\Users\chaey\0.Study\0.PracticeProject\GameProject_Test\GameProject_Test.cpp(735,27): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+C:\Users\chaey\0.Study\0.PracticeProject\GameProject_Test\GameProject_Test.cpp(837,27): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+C:\Users\chaey\0.Study\0.PracticeProject\GameProject_Test\GameProject_Test.cpp(921,27): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+C:\Users\chaey\0.Study\0.PracticeProject\GameProject_Test\GameProject_Test.cpp(1181,39): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
   Npc_Game.cpp
 C:\Users\chaey\0.Study\0.PracticeProject\GameProject_Test\Npc_Game.cpp(267,27): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
   코드를 생성하고 있습니다...

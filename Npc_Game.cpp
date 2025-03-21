@@ -199,7 +199,7 @@ int ShowItemDisc(int itemCode, vector<string> &RuleItem)
         }
         cout << iteminfo[itemCode].strItemName <<" 구매하였습니다.\n";
         MyMoney -= iteminfo[itemCode].intCost;
-        RuleItem.erase(RuleItem.begin() + itemCode);
+        //RuleItem.erase(RuleItem.begin() + itemCode);
 
         _getch();
         return 1;
