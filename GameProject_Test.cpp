@@ -239,7 +239,7 @@ void ShowBitmap(const char* filename)
     GetObject(hBitmap, sizeof(BITMAP), &bitmap);
 
     // 20, 50 위치에 200 x 200 사이즈로 출력
-    StretchBlt(hdc, 20, 50, 200, 200, hdcMem, 0, 0, bitmap.bmWidth, bitmap.bmHeight, SRCCOPY);
+    StretchBlt(hdc, 20, 100, 250, 250, hdcMem, 0, 0, bitmap.bmWidth, bitmap.bmHeight, SRCCOPY);
 
     DeleteDC(hdcMem);
     ReleaseDC(hwnd, hdc);
@@ -314,9 +314,9 @@ void GameEnding(int n, bool isGameClear)
     Ending_imgName[1] = "Ending_img\\trap.bmp";
     Ending_imgName[2] = "";
     Ending_imgName[3] = "";
-    Ending_imgName[4] = "";
+    Ending_imgName[4] = "Ending_img\\treasure.bmp";
     Ending_imgName[5] = "";
-    Ending_imgName[6] = "";
+    Ending_imgName[6] = "Ending_img\\kira.bmp";
     Ending_imgName[7] = "";
     Ending_imgName[8] = "";
     Ending_imgName[9] = "";
